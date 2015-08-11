@@ -101,15 +101,14 @@ Result: PASS
 					<section>
 					<h3>make unit_test</h3>
 						<pre><code data-trim>
-/srv/epages/eproot/Perl/bin/perl /srv/epages/eproot/Perl/bin/prove --jobs 9 t/unit 
 ...
-t/unit/Webservice_RestService.t ................... ok
-t/unit/UI_PaymentMethodPayPalPlus.t ............... ok
-t/unit/UI_JSON.t .................................. ok
-t/unit/UI_Shop.t .................................. ok
+compile_Cartridge.t ............................. ok
+ProfileExperienceId_si.t ........................ skipped: Cartridge DE_EPAGES::PayPalPlus does not exist.
+test_Cartridge.t ................................ ok
+unit/CreatePayment_RepositoryLineItem.t ......... ok
 ...
 All tests successful.
-Files=15, Tests=188,  4 wallclock secs ( 0.07 usr  0.03 sys + 11.27 cusr  1.08 csys = 12.45 CPU)
+Files=19, Tests=260, 13 wallclock secs ( 0.07 usr  0.04 sys + 12.08 cusr  0.97 csys = 13.16 CPU)
 Result: PASS
     					</code></pre>
 					</section>
