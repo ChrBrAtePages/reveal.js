@@ -46,7 +46,22 @@
 					</p>
 				</section>
 				<section>
-					<h2>Introduction</h2>
+					<h2>Agenda</h2>
+					<ul>
+						<li>common terms</li>
+						<li>testing in epages 6</li>
+						<li>system-integration test</li>
+						<li>user-interface-test</li>
+					</ul>
+				</section>
+				<section>
+					<h3>test phases</h3>
+					<ol>
+						<li>init</li>
+						<li>call</li>
+						<li>test</li>
+						<li>rollback</li>
+					</ol>
 				</section>
 				<section>
 					<section>
@@ -80,15 +95,10 @@
 					<img data-src="img/test_pyramid.gif">
 				</section>
 				<section>
-					<h3>TDD</h3>
-				</section>
-				<section>
 					<h3>mock / stub</h3>
 					<img data-src="img/mockvsstub.svg" border="0">
 				</section>
-				<section>
-					<h3>injection</h3>
-				</section>
+
 				<section>
 					<h3>general smells</h3>
 					<ul>
@@ -100,9 +110,10 @@
 						<li>don´t add logic to you test code(write a test for this logic)</li>
 						<li>don´t add logic to your code which you only need for testing</li>
 						<li>only test the public interface of your class</li>
-						<li>don´t do brute force</li>
+						<li>avoid constructor parameters</li>
 					</ul>
 				</section>
+<!-- ######################################### testing in ePages 6 ############################################ -->
 				<section>
 					<h1>testing in ePages 6</h1>
 				</section>
@@ -117,7 +128,7 @@
 					</section>
 					<section>
 					<h3>make test</h3>
-						<pre><code data-trim>
+						<pre><code data-trim class="nohighlight">
 ...
 compile_Cartridge.t ............................. ok
 ProfileExperienceId_si.t ........................ skipped: Cartridge DE_EPAGES::PayPalPlus does not exist.
@@ -131,7 +142,7 @@ Result: PASS
 					</section>
 					<section>
 					<h3>make unit_test</h3>
-						<pre><code data-trim>
+						<pre><code data-trim class="nohighlight">
 /srv/epages/eproot/Perl/bin/perl /srv/epages/eproot/Perl/bin/prove --jobs 9 t/unit 
 ...
 t/unit/Webservice_RestService.t ................... ok
@@ -153,15 +164,7 @@ Result: PASS
 						<img data-src="img/detailsview.png">
 					</section>
 				</section>
-				<section>
-					<h3>test phases</h3>
-					<ol>
-						<li>init</li>
-						<li>call</li>
-						<li>test</li>
-						<li>rollback</li>
-					</ol>
-				</section>
+
 				<section>
 					<section>
 						<h3>function vs method</h3>
@@ -169,18 +172,19 @@ Result: PASS
 					<section>
 						<h3>best to Test</h3>
 						<p>function / static method</p>
-						<pre><code data-trim>
+						<pre><code data-trim class="perl">
 sub add {
 	my ($x, $y) = @_;
 	return $x + $y;
 }
 						</code></pre>
+					<img data-src="img/camel-unicorn.png" class="fragment">
 					</section>
 					<section>
 						<h3>worst to Test</h3>
 						<p>function / static method</p> <small>with dependencies</small>
 						
-						<pre><code data-trim>
+						<pre><code data-trim class="perl">
 sub GetSessionTimeout {
 	my $System = LoadRootObject();
 	return $System->get('SessionTimeout');
@@ -188,9 +192,9 @@ sub GetSessionTimeout {
 						</code></pre>
 					</section>
 					<section>
-						<h3>OK to Test</h3>
+						<h3>Okay to Test</h3>
 						<p>method / member method</p>
-						<pre><code data-trim>
+						<pre><code data-trim class="perl">
 package DE_EPAGES::Jaja::API::Genau;
 use strict;
 sub new {
@@ -210,21 +214,55 @@ sub operate {
 					</section>
 				</section>
 				<section>
-					<h3>how to structure your code</h3>
-					<p>different injection technics</p>
-					<ul>
-						<li>constructor with default</li>
-						<li>setter with default</li>
-						<li>wrapper</li>
-					</ul>
-				</section>
-				<section>
-					<h3>mocking in ePages 6</h3>
-					<p>what has to be mocked?</p>
-				</section>
-				<section>
-					<h3>mocking in ePages 6</h3>
-					<p>how to mock with Mock::Extends</p>
+					<section>
+						<h3>injection techniques</h3>
+						<ul>
+							<li>constructor with default value</li>
+							<li>wrapper</li>
+						</ul>
+					</section>
+					<section>
+						<h3>constructor with default value</h3>
+						<pre><code data-trim class="perl">
+package DE_EPAGES::Jaja::API::Genau;
+use DE_EPAGES::BlaBla;
+use strict;
+sub new {
+    my $class = shift;
+    my ($BlablaObject) = @_;
+    my $self  = bless {
+        'BlaBla' => $BlablaObject \\ DE_EPAGES::BlaBla->new();
+    }, $class;
+    return $self;
+}
+sub operate {
+    my $self = shift;
+    return $self->{'BlaBla'}->doMagic();
+}
+1;
+						</code></pre>
+					</section>
+					<section>
+						<h3>wrapper</h3>
+						<pre><code data-trim>
+package DE_EPAGES::Jaja::API::Genau;
+use DE_EPAGES::BlaBla;
+use strict;
+sub new {
+    my $class = shift;
+    return bless {}, $class;
+}
+sub operate {
+	my $self = shift;
+ 	my $BlaObject = $self->_createBlaBlaObject();
+	return $self->{'BlaBla'}->doMagic();
+}
+sub _createBlaBlaObject{
+	return DE_EPAGES::BlaBla->new();
+}
+1;
+						</code></pre>
+					</section>
 				</section>
 				<section>
 					<h3>mocking in ePages 6</h3>
@@ -233,6 +271,10 @@ sub operate {
 				<section>
 					<h3>mocking in ePages 6</h3>
 					<p>introducing mockify</p>
+				</section>
+				<section>
+					<h3>from Mock::Extends to mockify</h3>
+					<p>live in eclipse</p>
 				</section>
 				<section>
 					<h1>hands on</h1>
@@ -276,7 +318,7 @@ sub operate {
 				controls: true,
 				progress: true,
 				history: true,
-				center: false,
+				center: true,
 
 				transition: 'slide', // none/fade/slide/convex/concave/zoom
 
