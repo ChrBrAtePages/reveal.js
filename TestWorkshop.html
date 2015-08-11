@@ -60,19 +60,19 @@
 					</section>
 					<section>
 					<h3>unit test</h3>
-						<img data-src="img/unitTest.png">
+						<img data-src="img/unitTest.svg">
 					</section>
 					<section>
 					<h3>integration test</h3>
-						<img data-src="img/integrationsTest.png">
+						<img data-src="img/integrationsTest.svg">
 					</section>
 					<section>
 					<h3>system-integration test</h3>
-						<img data-src="img/SystemIntegrationsTest.png">
+						<img data-src="img/systemintegrationsTest.svg">
 					</section>
 					<section>
 					<h3>user-interface-test</h3>
-						<img data-src="img/UITest.png">
+						<img data-src="img/UITest.svg">
 					</section>
 				</section>
 				<section>
@@ -84,7 +84,7 @@
 				</section>
 				<section>
 					<h3>mock / stub</h3>
-					<img data-src="img/mockvsstub.png" border="0">
+					<img data-src="img/mockvsstub.svg" border="0">
 				</section>
 				<section>
 					<h3>injection</h3>
@@ -154,8 +154,7 @@ Result: PASS
 					</section>
 				</section>
 				<section>
-					<h3>how to write a test</h3>
-					<p>test definition</p>
+					<h3>test phases</h3>
 					<ol>
 						<li>init</li>
 						<li>call</li>
@@ -164,12 +163,55 @@ Result: PASS
 					</ol>
 				</section>
 				<section>
-					<h3>how to structure your code</h3>
-					<p>function vs method</p>
+					<section>
+						<h3>function vs method</h3>
+					</section>
+					<section>
+						<h3>best to Test</h3>
+						<p>function / static method</p>
+						<pre><code data-trim>
+sub add {
+	my ($x, $y) = @_;
+	return $x + $y;
+}
+						</code></pre>
+					</section>
+					<section>
+						<h3>worst to Test</h3>
+						<p>function / static method</p> <small>with dependencies</small>
+						
+						<pre><code data-trim>
+sub GetSessionTimeout {
+	my $System = LoadRootObject();
+	return $System->get('SessionTimeout');
+}
+						</code></pre>
+					</section>
+					<section>
+						<h3>Okay to Test</h3>
+						<p>method / member method</p>
+						<pre><code data-trim>
+package DE_EPAGES::Jaja::API::Genau;
+use strict;
+sub new {
+    my $class = shift;
+    my ($BlablaObject) = @_;
+    my $self  = bless {
+        'BlaBla' => $BlablaObject \\ DE_EPAGES::BlaBla->new();
+    }, $class;
+    return $self;
+}
+sub operate {
+    my $self = shift;
+    return $self->{'BlaBla'}->doMagic();
+}
+1;
+						</code></pre>
+					</section>
 				</section>
 				<section>
 					<h3>how to structure your code</h3>
-					<p>differend injection technics</p>
+					<p>different injection technics</p>
 					<ul>
 						<li>constructor with default</li>
 						<li>setter with default</li>
