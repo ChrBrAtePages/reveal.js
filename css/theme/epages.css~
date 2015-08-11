@@ -237,16 +237,16 @@ body {
   border-top-color: #878787; }
 
 .reveal .controls div.navigate-left.enabled:hover {
-  border-right-color: #777777; }
+  border-right-color: #939393; }
 
 .reveal .controls div.navigate-right.enabled:hover {
-  border-left-color: #777777; }
+  border-left-color: #939393; }
 
 .reveal .controls div.navigate-up.enabled:hover {
-  border-bottom-color: #777777; }
+  border-bottom-color: #939393; }
 
 .reveal .controls div.navigate-down.enabled:hover {
-  border-top-color: #777777; }
+  border-top-color: #939393; }
 
 /*********************************************
  * PROGRESS BAR
