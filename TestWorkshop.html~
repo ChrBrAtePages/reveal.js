@@ -48,10 +48,9 @@
 				<section>
 					<h2>Agenda</h2>
 					<ul>
-						<li>common terms</li>
+						<li>common testing terms</li>
 						<li>testing in epages 6</li>
-						<li>system-integration test</li>
-						<li>user-interface-test</li>
+						<li>hands on</li>
 					</ul>
 				</section>
 				<section>
@@ -71,45 +70,49 @@
 							<li>integration test</li>
 							<li>system-integration test</li>
 							<li>user-interface-test</li>
+							<li>test pyramide</li>
 						</ul>
 					</section>
 					<section>
-					<h3>unit test</h3>
+						<h3>unit test</h3>
 						<img data-src="img/unitTest.svg">
 					</section>
 					<section>
-					<h3>integration test</h3>
+						<h3>integration test</h3>
 						<img data-src="img/integrationsTest.svg">
 					</section>
 					<section>
-					<h3>system-integration test</h3>
+						<h3>system-integration test</h3>
 						<img data-src="img/systemintegrationsTest.svg">
 					</section>
 					<section>
-					<h3>user-interface-test</h3>
+						<h3>user-interface-test</h3>
 						<img data-src="img/UITest.svg">
 					</section>
+					<section>
+						<h3>test pyramide</h3>
+						<img data-src="img/TestPyramide.svg">
+					</section>
 				</section>
+
 				<section>
-					<h3>test pyramide</h3>
-					<img data-src="img/test_pyramid.gif">
-				</section>
-				<section>
-					<h3>mock / stub</h3>
+					<h3>mock and stub</h3>
 					<img data-src="img/mockvsstub.svg" border="0">
 				</section>
 
 				<section>
-					<h3>general smells</h3>
+					<h3>general unit-test smells</h3>
 					<ul>
-						<li>only test your code</li>
+						<li>only test the code <b>you</b> currently write</li>
 						<ul>
-							<li>NOT library´s</li>
-							<li>NOT 3rd Party webservices / SDK</li>
+							<li>not our core-libraries</li>
+							<li>not external libraries</li>
+							<li>not 3rd Party webservices</li>
+							<li>not SDK/API</li>
 						</ul>
-						<li>don´t add logic to you test code(write a test for this logic)</li>
-						<li>don´t add logic to your code which you only need for testing</li>
-						<li>only test the public interface of your class</li>
+						<li>don't add logic into test</li>
+						<li>don't add logic into your code which you only need for testing</li>
+						<li>don't test <b>private methods</b></li>
 						<li>avoid constructor parameters</li>
 					</ul>
 				</section>
@@ -164,7 +167,59 @@ Result: PASS
 						<img data-src="img/detailsview.png">
 					</section>
 				</section>
-
+<!-- ######################################### injection techniques ############################################ -->
+				<section>
+					<section>
+						<h3>injection techniques</h3>
+						<ul>
+							<li>constructor with default value</li>
+							<li>wrapper</li>
+						</ul>
+					</section>
+					<section>
+						<h3>constructor with default value</h3>
+						<pre><code data-trim class="perl">
+package DE_EPAGES::Jaja::API::Genau;
+use DE_EPAGES::BlaBla;
+use strict;
+sub new {
+    my $class = shift;
+    my ($BlablaObject) = @_;
+    my $self  = bless {
+        'BlaBla' => $BlablaObject \\ DE_EPAGES::BlaBla->new();
+    }, $class;
+    return $self;
+}
+sub operate {
+    my $self = shift;
+    return $self->{'BlaBla'}->doMagic();
+}
+1;
+						</code></pre>
+					</section>
+					<section>
+						<h3>wrapper</h3>
+						<pre><code data-trim class="perl">
+package DE_EPAGES::Jaja::API::Genau;
+use DE_EPAGES::BlaBla;
+use strict;
+sub new {
+    my $class = shift;
+    return bless {}, $class;
+}
+sub operate {
+	my $self = shift;
+ 	my $BlaObject = $self->_createBlaBlaObject();
+	return $self->{'BlaBla'}->doMagic();
+}
+sub _createBlaBlaObject{
+	return DE_EPAGES::BlaBla->new();
+}
+1;
+						</code></pre>
+					</section>
+				</section>
+<!-- ######################################### function vs method ############################################ -->
 				<section>
 					<section>
 						<h3>function vs method</h3>
@@ -213,94 +268,40 @@ sub operate {
 						</code></pre>
 					</section>
 				</section>
+
+<!-- ######################################### mocking in ePages 6 ############################################ -->
 				<section>
 					<section>
-						<h3>injection techniques</h3>
-						<ul>
-							<li>constructor with default value</li>
-							<li>wrapper</li>
-						</ul>
+						<h3>epages 6 business object</h3>
+						<p>ep6 object is a subset of perl object</p>
 					</section>
 					<section>
-						<h3>constructor with default value</h3>
+						<h3>DAL - in a very small nutshell</h3>
+						<img data-src="img/DAL.svg">
+					</section>
+					<section>
+						<h3>use of business object</h3>
 						<pre><code data-trim class="perl">
-package DE_EPAGES::Jaja::API::Genau;
-use DE_EPAGES::BlaBla;
-use strict;
-sub new {
-    my $class = shift;
-    my ($BlablaObject) = @_;
-    my $self  = bless {
-        'BlaBla' => $BlablaObject \\ DE_EPAGES::BlaBla->new();
-    }, $class;
-    return $self;
-}
-sub operate {
-    my $self = shift;
-    return $self->{'BlaBla'}->doMagic();
-}
-1;
-						</code></pre>
-					</section>
-					<section>
-						<h3>wrapper</h3>
-						<pre><code data-trim>
-package DE_EPAGES::Jaja::API::Genau;
-use DE_EPAGES::BlaBla;
-use strict;
-sub new {
-    my $class = shift;
-    return bless {}, $class;
-}
-sub operate {
-	my $self = shift;
- 	my $BlaObject = $self->_createBlaBlaObject();
-	return $self->{'BlaBla'}->doMagic();
-}
-sub _createBlaBlaObject{
-	return DE_EPAGES::BlaBla->new();
-}
-1;
-						</code></pre>
+my $Shop->get('AttributeName');
+my $Shop->set({'AttributeName' => 'newValue'});
+						</code><pre>
 					</section>
 				</section>
-				<section>
-					<h3>mocking in ePages 6</h3>
-					<p>epages bussines object</p>
-				</section>
-				<section>
-					<h3>mocking in ePages 6</h3>
-					<p>introducing mockify</p>
-				</section>
+<!-- ######################################### from Mock::Extends to mockify ############################################ -->
 				<section>
 					<h3>from Mock::Extends to mockify</h3>
 					<p>live in eclipse</p>
 				</section>
 				<section>
-					<h1>hands on</h1>
-				</section>
-				<section>
 					<h3>hands on</h3>
-					<p>test in perl</p>
-					<p>mocking everything with mockify</p>
-				</section>
-				<section>
-					<h3>hands on</h3>
-					<p>Best practices</p>
 					<ul>
 						<li>testing perl classes</li>
 						<li>epages business classes</li>
 						<li>ui controller</li>
-						<li>hooks</li>  
+						<li>hooks</li>
 					</ul>
 				</section>
 				<section>
-					<h1>
-						colors
-					</h1>
-					<p>epages red:  #e40822</p>
-					<p>epages grey: #878787</p>
-
 				</section>
 			</div>
 
